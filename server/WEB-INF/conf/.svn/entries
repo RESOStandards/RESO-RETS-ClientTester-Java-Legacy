@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="866"
+   name=""
+   committed-date="2005-02-16T16:23:05.000000Z"
+   url="http://tools.rets.org/repos/retsdev/trunk/rets_client/server/WEB-INF/conf"
+   last-author="jthomas"
+   kind="dir"
+   uuid="167fd766-a90e-0410-b386-a47fca3fb75b"
+   repos="http://tools.rets.org/repos/retsdev"
+   revision="1756"/>
+<entry
+   committed-rev="866"
+   name="struts-config.xml"
+   text-time="2006-05-01T14:05:04.994283Z"
+   committed-date="2005-02-16T16:23:05.000000Z"
+   checksum="845a99bd57c0dcc8c1bf6a0163401118"
+   last-author="jthomas"
+   kind="file"
+   prop-time="2006-05-01T14:05:04.963036Z"/>
+</wc-entries>

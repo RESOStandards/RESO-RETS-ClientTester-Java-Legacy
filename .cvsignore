@@ -1,0 +1,6 @@
+bin
+build.remote
+dist.local
+dist.remote
+work
+build.local

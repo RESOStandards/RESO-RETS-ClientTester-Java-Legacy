@@ -1,0 +1,234 @@
+<project name="ClientCompliance" default="local.compile">
+	<description>
+This is the build file for the RETS Client Compliance project.
+Make sure that the correct "build.properties" file is in this directory before running Ant.
+
+local.* targets will build for deployment to a local Tomcat.
+remote.* targets will build to a war file.
+	</description>
+
+	<!-- Property Definitions ============================================== -->
+	<property file="build.properties" />
+
+	<!-- Path Definitions ================================================== -->
+	<path id="new.classpath">
+		<fileset dir="${webapp.lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+
+		<fileset dir="${catalina.home}/lib">
+			<include name="servlet.jar" />
+		</fileset>
+
+		<pathelement path="${java.class.path}" />
+	</path>
+
+	<path id="schema.classpath">
+		<pathelement path="build.local/WEB-INF/classes" />
+
+		<fileset dir="build.local/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+
+		<pathelement path="${java.class.path}" />
+	</path>
+
+	<!-- Shortcut targets ================================================== -->
+	<target name="cleanall" description="Shortcut to local.clean and remote.clean" if="webapp.name">
+
+		<antcall target="local.clean" />
+		<antcall target="local.undeploy" />
+		<antcall target="remote.clean" />
+	</target>
+
+	<target name="cleanlogs" description="Shortcut to local.cleanlogs." if="developer">
+		<antcall target="local.cleanlogs" />
+	</target>
+
+	<target name="local" description="Shortcut to local.deploy" if="webapp.name">
+
+		<antcall target="local.deploy" />
+	</target>
+
+	<target name="remote" description="Shortcut to remote.deploy." if="webapp.name">
+
+		<antcall target="remote.deploy" />
+	</target>
+
+	<!-- Local build and deploy targets ==================================== -->
+	<target name="local.clean" description="Cleanup a local build." if="webapp.name">
+		<property name="build.target" value="local" />
+
+		<antcall target=".clean" />
+	</target>
+
+	<target name="local.cleanlogs" description="Delete all Tomcat logs." if="developer">
+
+		<delete dir="${catalina.home}/logs" />
+		<mkdir dir="${catalina.home}/logs" />
+		<mkdir dir="${catalina.home}/logs/${webapp.name}" />
+	</target>
+
+	
+	<target name="local.compile" description="Compile a local build." if="webapp.name">
+		<property name="build.target" value="local" />
+		<property name="compile.debug" value="true" />
+		<property name="compile.debuglevel" value="lines,source,vars" />
+
+		<antcall target=".prepare" />
+		<antcall target=".compile" />
+	</target>
+
+	<target name="local.deploy" description="Deploy a local build." if="webapp.name">
+		<property name="build.target" value="local" />
+
+		<antcall target="local.compile" />
+		<antcall target=".deploy.local" />
+	</target>
+
+	<target name="local.dist" description="Deploy a local build." if="webapp.name">
+		<property name="build.target" value="local" />
+
+		<antcall target="local.compile" />
+		<antcall target=".deploy.remote" />
+	</target>
+
+	<target name="local.undeploy" description="Undeploy from the local Tomcat." if="webapp.name">
+		<property name="build.target" value="local" />
+
+		<antcall target=".undeploy.local" />
+	</target>
+
+	<target name="local.veryclean" description="Cleanup a local build and deploy." if="webapp.name">
+		<property name="build.target" value="local" />
+
+		<antcall target="local.clean" />
+		<antcall target="local.cleanlogs" />
+		<antcall target="local.undeploy" />
+	</target>
+
+	<!-- "ZIPPED" Distribution Targets -> Maven/Sandbox ============================================= -->
+	<target name="src.dist" description="Create a source distribution." depends="remote.deploy">
+		<delete dir="src.dist" />
+		<mkdir dir="src.dist" />
+		<zip destfile="rets-client-compliance-checker-1.2-src.zip">
+			<fileset dir=".">
+				<patternset id="src.files">
+					<include name="server/**/*" />
+					<include name="src/**/*" />
+					<include name="build*" />
+					<exclude name="build.remote" />
+				</patternset>
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="binary.dist" description="Create a Binary distribution, includes .war file and User Guide" depends="remote.deploy">
+		<delete dir="bin.dist" />
+		<mkdir dir="bin.dist" />
+		<zip destfile="bin.dist/rets-client-compliance-checker-${version}.zip" filesonly="true">
+			<fileset dir="server/doc" includes="**/*.doc" />
+			<fileset dir="./dist.${build.target}" includes="*.war" />
+			<fileset dir=".">
+				<patternset id="src.files">
+					<include name="build*" />
+					<exclude name="build.remote" />
+				</patternset>
+			</fileset>
+		</zip>
+	</target>
+
+	<!-- Remote deploy targets ============================================= -->
+	<target name="remote.clean" description="Cleanup a remote build." if="webapp.name">
+		<property name="build.target" value="remote" />
+
+		<antcall target=".clean" />
+	</target>
+
+	<target name="remote.compile" description="Compile for remote deployment." if="webapp.name">
+		<property name="build.target" value="remote" />
+		<property name="compile.debug" value="true" />
+		<property name="compile.debuglevel" value="lines,source,vars" />
+
+		<antcall target=".prepare" />
+		<antcall target=".compile" />
+	</target>
+
+	<target name="remote.deploy" description="Create the war file for remote deployment." if="webapp.name">
+		<property name="build.target" value="remote" />
+
+		<antcall target="remote.compile" />
+		<antcall target=".deploy.remote" />
+	</target>
+
+	<!-- Internal targets ================================================== -->
+	<target name=".clean" description="Internal target, do not use." if="build.target">
+		<delete dir="build.${build.target}" />
+		<delete dir="dist.${build.target}" />
+	</target>
+
+	<target name=".compile" description="Internal target, do not use." if="build.target">
+		<javac srcdir="src" destdir="build.${build.target}/WEB-INF/classes" debug="${compile.debug}" debuglevel="${compile.debuglevel}">
+			<classpath refid="new.classpath" />
+			<include name="**/*.java" />
+		</javac>
+	</target>
+
+	<target name=".deploy.local" description="Internal target, do not use." if="build.target">
+		<copy todir="${webapp.deploy.dir}">
+			<fileset dir="build.${build.target}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name=".deploy.remote" description="Internal target, do not use." if="build.target">
+		<delete file="dist.${build.target}/${webapp.war.name}" />
+		<jar jarfile="dist.${build.target}/${webapp.war.name}" basedir="build.${build.target}" excludes="**/*.doc,**/doc" />
+	</target>
+
+	<target name=".prepare" description="Internal target, do not use." if="build.target">
+		<mkdir dir="build.${build.target}" />
+		<mkdir dir="build.${build.target}/WEB-INF" />
+		<mkdir dir="build.${build.target}/WEB-INF/classes" />
+		<mkdir dir="build.${build.target}/WEB-INF/lib" />
+		<mkdir dir="dist.${build.target}" />
+
+		<copy todir="build.${build.target}">
+			<fileset dir="server">
+				<include name="**/*" />
+				<exclude name="**/servlet.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="build.${build.target}/WEB-INF/classes">
+			<fileset dir="src/">
+				<include name="**/*" />
+				<exclude name="**/*.java" />
+				<exclude name="etc" />
+			</fileset>
+			<fileset dir="src/etc/">
+				<include name="**/*" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name=".undeploy.local" description="Internal target, do not use." if="build.target">
+
+		<delete dir="${webapp.deploy.dir}" />
+	</target>
+
+	<target name="schema" depends="local.deploy" description="Generate DB schema from the O/R mapping files">
+		<!-- Teach Ant how to use Hibernate's schema generation tool -->
+		<taskdef name="schemaexport" classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask" classpathref="schema.classpath" />
+
+		<schemaexport properties="${webapp.src.dir}/hibernate.properties" quiet="no" text="no" drop="no">
+			<fileset dir="${webapp.src.dir}">
+				<include name="**/*.hbm.xml" />
+			</fileset>
+		</schemaexport>
+	</target>
+
+</project>

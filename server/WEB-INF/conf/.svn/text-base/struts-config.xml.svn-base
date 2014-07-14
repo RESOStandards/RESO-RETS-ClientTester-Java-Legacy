@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+    "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+    <!-- ========== Form Bean Definitions =================================== -->
+    <form-beans>
+
+        <form-bean name="LoginForm" type="org.realtor.rets.compliance.client.view.LoginForm">
+        </form-bean>
+        
+        <form-bean name="createAccountScreen" type="org.realtor.rets.compliance.client.view.AccountScreen">
+        </form-bean>
+        
+        <form-bean name="updateForm" type="org.realtor.rets.compliance.client.view.UpdateForm">
+        </form-bean>
+        
+        <form-bean name="testForm" type="org.realtor.rets.compliance.client.view.TestForm">
+        </form-bean>
+        
+        <form-bean name="testDetailForm" type="org.realtor.rets.compliance.client.view.TestForm">
+        </form-bean>
+   
+        <form-bean name="emailForm" type="org.realtor.rets.compliance.client.view.EmailForm">
+        </form-bean>
+        
+	    <form-bean name="setupForm" type="org.realtor.rets.compliance.client.view.SetupForm">
+	    </form-bean>
+        
+    </form-beans>
+
+    <global-forwards>
+        <forward name="loginPage" path="/Logon.jsp"/>
+        <forward name="setup" path="/setup.do"/>
+    </global-forwards>
+
+     <!-- ========== Action Mapping Definitions ============================== -->
+    <action-mappings>
+        <action path="/resetTests"
+                type="org.realtor.rets.compliance.client.view.ResetTestsAction"
+                name="LoginForm"
+                scope="request">
+             <forward name="success" path="/getTests.do"/>
+        </action>
+        
+        <action path="/getTests"
+                type="org.realtor.rets.compliance.client.view.GetTestsAction"
+                name="LoginForm"
+                scope="request">
+             <forward name="success" path="/Test.jsp"/>
+        </action>
+        
+        <action path="/logonSubmit"
+                type="org.realtor.rets.compliance.client.view.LoginAction"
+                name="LoginForm"
+                scope="request">
+             <forward name="success" path="/getTests.do"/>
+             <forward name="failure" path="/Logon.jsp"/>
+        </action>
+        
+        <action path="/saveRegistration"
+                type="org.realtor.rets.compliance.client.view.RegistrationAction"
+                name="createAccountScreen"
+                scope="request">
+             <forward name="failure" path="/Registration.jsp"/>
+             <forward name="success" path="/getTests.do"/>
+        </action>
+        
+	 	<action path="/testdetail"
+                type="org.realtor.rets.compliance.client.view.TestAction"
+                name="testForm"
+                scope="request">
+             <forward name="success" path="/TestDetail.jsp"/>
+        </action>
+
+        <action path="/saveTest"
+                type="org.realtor.rets.compliance.client.view.TestDetailAction"
+                name="testDetailForm"
+                scope="request">
+             <forward name="success" path="/TestDetailMessage.jsp"/>
+        </action>
+        
+        <action path="/emailTests"
+                type="org.realtor.rets.compliance.client.view.EmailTestsAction"
+                name="emailForm"
+                scope="request">
+             <forward name="success" path="/getTests.do"/>
+        </action>
+		
+        <action path="/saveTests"
+                type="org.realtor.rets.compliance.client.view.SaveTestsAction"
+                name="emailForm"
+                scope="request">
+             <forward name="success" path="/testResults.txt"/>
+        </action>
+		
+        <action path="/setup"
+                type="org.realtor.rets.compliance.client.view.SetupAction"
+                scope="request">
+             <forward name="success" path="/Setup.jsp"/>
+        </action>
+
+        <action path="/saveSetup"
+                type="org.realtor.rets.compliance.client.view.SaveSetupAction"
+                name="setupForm"
+                scope="request">
+             <forward name="success" path="/Logon.jsp"/>
+        </action>
+     </action-mappings>
+
+    </struts-config>

@@ -1,0 +1,41 @@
+<Context path="/retsClientCompliance" reloadable="true"
+	 docBase="retsClientCompliance"
+	 debug="2" override="true">
+
+    <Resource name="jdbc/retsClientCompliance" auth="Container" type="javax.sql.DataSource"/>
+    <ResourceParams name="jdbc/retsClientCompliance">
+	<parameter>
+	    <name>factory</name>
+	    <value>org.apache.commons.dbcp.BasicDataSourceFactory</value>
+	</parameter>
+	<parameter>
+	    <name>maxActive</name>
+	    <value>20</value>
+	</parameter>
+	<parameter>
+	    <name>maxIdle</name>
+	    <value>10</value>
+	</parameter>
+	<parameter>
+	    <name>maxWait</name>
+	    <value>10000</value>
+	</parameter>
+	<parameter>
+	    <name>username</name>
+	    <value>rets</value>
+	</parameter>
+	<parameter>
+	    <name>password</name>
+	    <value>rets</value>
+	</parameter>
+	<parameter>
+	    <name>driverClassName</name>
+	    <value>com.mysql.jdbc.Driver</value>
+	</parameter>
+	<parameter>
+	    <name>url</name>
+	    <value>jdbc:mysql://localhost:3306/rets?autoReconnect=true</value>
+	</parameter>
+    </ResourceParams>
+</Context>
+ 

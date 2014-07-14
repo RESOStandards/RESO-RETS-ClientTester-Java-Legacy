@@ -1,0 +1,8 @@
+<Context path="/retsClientCompliance" reloadable="true"
+         docBase="retsClientCompliance"
+         debug="2" >
+
+    <Resource name="jdbc/retsClientCompliance" auth="Container" type="javax.sql.DataSource"
+maxActive="500" maxIdle="10" maxWait="10000"   username="rets" password="rets" driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/RETS?autoReconnect=true&amp;autoCommit=true"/>
+</Context>
+<!--factory="org.apache.commons.dbcp.BasicDataSourceFactory"-->

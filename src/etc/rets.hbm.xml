@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping> 
+
+  <class name="org.realtor.rets.compliance.client.ClientSession" table="client_session">
+    <id name="id" type="string">
+      <generator class="uuid.hex"/>
+    </id>
+
+    <property name="lastRun" type="integer" not-null="true"/>
+    <property name="username" type="string" not-null="true"/>
+
+    <list name="tests" table="tests" cascade="all-delete-orphan">
+      <key column="session_id"/>
+      <index column="list_index"/>
+      <one-to-many class="org.realtor.rets.compliance.client.ClientTest"/>
+    </list> 
+  </class>
+
+  <class name="org.realtor.rets.compliance.client.ClientTest" table="test">
+    <id name="id" type="string">
+      <generator class="uuid.hex"/>
+    </id>
+
+    <discriminator column="testType" type="string"/>
+
+    <property name="description" type="string"/>
+    <property name="passed" type="boolean"/>
+    <property name="status" type="string" length="20"/>
+	<property name="request" type="string" length="5000"/>
+    <property name="response" type="string" length="5000"/>
+    <property name="retsStatus" type="string" length="20"/>
+	
+	<subclass name="org.realtor.rets.compliance.client.tests.ActionTest" discriminator-value="ActionTest">
+	</subclass>
+
+	<subclass name="org.realtor.rets.compliance.client.tests.BasicLoginTest" discriminator-value="BasicLoginTest">
+	</subclass>
+
+	<subclass name="org.realtor.rets.compliance.client.tests.DigestLoginTest" discriminator-value="DigestLoginTest">
+	</subclass>
+
+	<subclass name="org.realtor.rets.compliance.client.tests.GetObjectTest" discriminator-value="GetObjectTest">
+	</subclass>
+
+	<subclass name="org.realtor.rets.compliance.client.tests.LogoutTest" discriminator-value="LogoutTest">
+	</subclass>
+
+	<subclass name="org.realtor.rets.compliance.client.tests.MetaData11Test" discriminator-value="MetaData11Test">
+	</subclass>
+
+	<subclass name="org.realtor.rets.compliance.client.tests.MetaDataTest" discriminator-value="MetaDataTest">
+	</subclass>
+
+	<subclass name="org.realtor.rets.compliance.client.tests.NoActionTest" discriminator-value="NoActionTest">
+	</subclass>
+
+	<subclass name="org.realtor.rets.compliance.client.tests.SearchTest" discriminator-value="SearchTest">
+	</subclass>
+
+	<subclass name="org.realtor.rets.compliance.client.tests.UpdateTest" discriminator-value="UpdateTest">
+	</subclass>
+
+	 <subclass name="org.realtor.rets.compliance.client.tests.GetPayloadListTest" discriminator-value="GetPayloadListTest">
+	</subclass>
+
+    <subclass name="org.realtor.rets.compliance.client.tests.PostObjectTest" discriminator-value="PostObjectTest">
+	</subclass>
+  </class>
+
+  <class name="org.realtor.rets.compliance.client.authentication.User" table="user">
+    <id name="id" type="string">
+      <generator class="uuid.hex"/>
+    </id>
+
+    <property name="company" type="string"/>
+    <property name="email" type="string"/>
+    <property name="naming" type="string"/>
+    <property name="name" type="string"/>
+    <property name="phone" type="string"/>
+    <property name="product" type="string"/>
+    <property name="version" type="string"/>
+    <property name="password" type="string"/>
+  </class>
+</hibernate-mapping>
